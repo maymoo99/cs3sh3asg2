@@ -14,16 +14,32 @@ typedef struct TLBentry {
 	int frame;
 }TLBentry;
 
-void search_TLB(){} //ADD CODE
+TLBentry TLB[TLB_SIZE];
+int fifo = 0; //Keep track of oldest entry
 
-void TLB_Add(){} //ADD CODE
+int search_TLB(int* page_num){
+	int i;
+	for ( i = 0; i < TLB_SIZE; i++){
+		if ((int *)TLB[i].page == page_num)
+			return i; //Return the entry index
+	}
+	return -1; //Miss
+} //END search_TLB()
 
-void TLB_Update(){} //ADD CODE
+void TLB_Add(int* page_num, int* frame_num){
+	TLB[fifo].page = (int) page_num;
+	TLB[fifo].frame = (int) frame_num;
+	fifo = ++fifo % TLB_SIZE;
+} //END TLB_Add()
+
+void TLB_Update(int* page_num, int* frame_num){
+	TLB[search_TLB(page_num)].frame = (int) frame_num;
+} //END TLB_Update()
 
 int main(int argc, char* argv[]){
 	//int page_table[PAGES] = {6,4,3,7,0,1,2,5};
 
-	TLBentry TLB[TLB_SIZE];
+	
 
 	FILE *fptr = fopen("addresses.txt", "r");
 	char buff[BUFFER_SIZE];
